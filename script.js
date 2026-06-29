@@ -5,7 +5,7 @@ let currentCurrency = "USD";
 
 const rates = {
   USD: { symbol: "$", rate: 1.0 },
-  INR: { symbol: "₹", rate: 83.5 },
+  INR: { symbol: "₹", rate: 94.40 },
   EUR: { symbol: "€", rate: 0.92 },
   GBP: { symbol: "£", rate: 0.79 },
   JPY: { symbol: "¥", rate: 159.5 },
@@ -15,10 +15,30 @@ const rates = {
 
 window.onload = function () {
   checkApplicationState();
+  fetchLiveRates();
   document.getElementById("formDate").value = new Date()
     .toISOString()
     .split("T")[0];
 };
+
+async function fetchLiveRates() {
+  try {
+    const response = await fetch("https://open.er-api.com/v6/latest/USD");
+    const data = await response.json();
+    if (data && data.rates) {
+      rates.USD.rate = 1.0;
+      rates.INR.rate = data.rates.INR || 83.5;
+      rates.EUR.rate = data.rates.EUR || 0.92;
+      rates.GBP.rate = data.rates.GBP || 0.79;
+      rates.JPY.rate = data.rates.JPY || 159.5;
+      rates.CAD.rate = data.rates.CAD || 1.37;
+      rates.AUD.rate = data.rates.AUD || 1.5;
+      updateDashboardUI();
+    }
+  } catch (error) {
+    updateDashboardUI();
+  }
+}
 
 function checkApplicationState() {
   const register = document.getElementById("registerScreen");
@@ -244,30 +264,30 @@ function updateDashboardUI() {
 
       row.innerHTML =
         ' \
-              <td class="py-2.5 px-3 text-slate-400 whitespace-nowrap">' +
+        <td class="py-2.5 px-3 text-slate-400 whitespace-nowrap">' +
         dateStr +
         '</td> \
-              <td class="py-2.5 px-3 font-medium text-slate-100">' +
+        <td class="py-2.5 px-3 font-medium text-slate-100">' +
         t.description +
         '</td> \
-              <td class="py-2.5 px-3"><span class="px-2 py-0.5 rounded text-[9px] bg-navy-input border border-navy-border text-slate-400 font-medium">' +
+        <td class="py-2.5 px-3"><span class="px-2 py-0.5 rounded text-[9px] bg-navy-input border border-navy-border text-slate-400 font-medium">' +
         t.category +
         '</span></td> \
-              <td class="py-2.5 px-3 text-right ' +
+        <td class="py-2.5 px-3 text-right ' +
         styleClass +
         '">' +
         sign +
         symbol +
         itemVal.toFixed(2) +
         '</td> \
-              <td class="py-2.5 px-3 text-center"> \
-                <button onclick="removeTransaction(' +
+        <td class="py-2.5 px-3 text-center"> \
+          <button onclick="removeTransaction(' +
         t.id +
         ')" class="p-1 text-rose-400 hover:text-rose-300 transition"> \
-                  <i class="ri-delete-bin-line"></i> \
-                </button> \
-              </td> \
-            ';
+            <i class="ri-delete-bin-line"></i> \
+          </button> \
+        </td> \
+      ';
       table.appendChild(row);
     }
   }
@@ -283,7 +303,6 @@ function updateDashboardUI() {
 
   renderCustomChart(convertedInc, convertedExp);
 }
-
 function renderCustomChart(inc, exp) {
   const container = document.getElementById("chartContainer");
   const symbol = rates[currentCurrency].symbol;
@@ -309,31 +328,30 @@ function renderCustomChart(inc, exp) {
 
   container.innerHTML =
     ' \
-          <div class="flex flex-col items-center justify-end h-full"> \
-            <div class="bg-emerald-500 w-12 sm:w-16 rounded-t transition-all duration-300 relative group cursor-pointer" style="height: ' +
+    <div class="flex flex-col items-center justify-end h-full"> \
+      <div class="bg-emerald-500 w-12 sm:w-16 rounded-t transition-all duration-300 relative group cursor-pointer" style="height: ' +
     incPct +
     '%"> \
-              <span class="absolute bottom-full left-1/2 -translate-x-1/2 bg-navy-sidebar border border-navy-border text-[9px] px-2 py-0.5 rounded shadow-xl hidden group-hover:block whitespace-nowrap text-emerald-400 mb-1">' +
+        <span class="absolute bottom-full left-1/2 -translate-x-1/2 bg-navy-sidebar border border-navy-border text-[9px] px-2 py-0.5 rounded shadow-xl hidden group-hover:block whitespace-nowrap text-emerald-400 mb-1">' +
     symbol +
     inc.toFixed(2) +
     '</span> \
-            </div> \
-            <span class="text-[10px] font-semibold text-slate-400 mt-2">Income</span> \
-          </div> \
-          <div class="flex flex-col items-center justify-end h-full"> \
-            <div class="bg-rose-500 w-12 sm:w-16 rounded-t transition-all duration-300 relative group cursor-pointer" style="height: ' +
+      </div> \
+      <span class="text-[10px] font-semibold text-slate-400 mt-2">Income</span> \
+    </div> \
+    <div class="flex flex-col items-center justify-end h-full"> \
+      <div class="bg-rose-500 w-12 sm:w-16 rounded-t transition-all duration-300 relative group cursor-pointer" style="height: ' +
     expPct +
     '%"> \
-              <span class="absolute bottom-full left-1/2 -translate-x-1/2 bg-navy-sidebar border border-navy-border text-[9px] px-2 py-0.5 rounded shadow-xl hidden group-hover:block whitespace-nowrap text-rose-400 mb-1">' +
+        <span class="absolute bottom-full left-1/2 -translate-x-1/2 bg-navy-sidebar border border-navy-border text-[9px] px-2 py-0.5 rounded shadow-xl hidden group-hover:block whitespace-nowrap text-rose-400 mb-1">' +
     symbol +
     exp.toFixed(2) +
     '</span> \
-            </div> \
-            <span class="text-[10px] font-semibold text-slate-400 mt-2">Expenses</span> \
-          </div> \
-        ';
+      </div> \
+      <span class="text-[10px] font-semibold text-slate-400 mt-2">Expenses</span> \
+    </div> \
+  ';
 }
-
 function showModal() {
   document.getElementById("formDesc").value = "";
   document.getElementById("formAmount").value = "";
