@@ -1,0 +1,1199 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>FinTrack - Pro || Debanjan</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      href="https://cdn.jsdelivr.net/npm/remixicon@4.9.0/fonts/remixicon.css"
+      rel="stylesheet"
+    />
+    <script>
+      tailwind.config = {
+        theme: {
+          extend: {
+            fontFamily: {
+              sans: ["Inter", "sans-serif"],
+            },
+            colors: {
+              navy: {
+                bg: "#0b111e",
+                sidebar: "#090d16",
+                card: "#161d30",
+                border: "#222b44",
+                input: "#121824",
+              },
+            },
+          },
+        },
+      };
+    </script>
+    <style>
+      ::-webkit-scrollbar {
+        width: 6px;
+        height: 6px;
+      }
+      ::-webkit-scrollbar-track {
+        background: #0b111e;
+      }
+      ::-webkit-scrollbar-thumb {
+        background: #222b44;
+        border-radius: 4px;
+      }
+      ::-webkit-scrollbar-thumb:hover {
+        background: #2d3855;
+      }
+      .fade-in {
+        animation: animFade 0.3s ease-out forwards;
+      }
+      @keyframes animFade {
+        from {
+          opacity: 0;
+          transform: translateY(5px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+    </style>
+  </head>
+  <body class="bg-navy-bg text-slate-100 font-sans antialiased min-h-screen">
+    <div
+      id="registerScreen"
+      class="fixed inset-0 z-50 bg-navy-bg flex items-center justify-center p-4 hidden"
+    >
+      <div
+        class="bg-navy-card border border-navy-border p-8 rounded-2xl w-full max-w-md shadow-2xl space-y-6 fade-in"
+      >
+        <div class="text-center space-y-2">
+          <div class="inline-flex p-3 bg-blue-600 rounded-2xl text-white mb-2">
+            <i class="ri-user-add-line text-3xl"></i>
+          </div>
+          <h2 class="text-2xl font-bold text-white tracking-tight">
+            Create Workspace Account
+          </h2>
+          <p class="text-slate-400 text-xs">
+            Set up your profile security credentials to get started
+          </p>
+        </div>
+        <form onsubmit="registerUser(event)" class="space-y-4">
+          <div>
+            <label
+              class="block text-[10px] font-bold text-slate-400 uppercase mb-1.5"
+              >What's your name?</label
+            >
+            <input
+              type="text"
+              id="regName"
+              required
+              placeholder="Enter your full name"
+              class="w-full px-4 py-2.5 bg-navy-input border border-navy-border rounded-xl text-xs text-white focus:outline-none focus:border-blue-500"
+            />
+          </div>
+          <div>
+            <label
+              class="block text-[10px] font-bold text-slate-400 uppercase mb-1.5"
+              >Starting Balance ($)</label
+            >
+            <input
+              type="number"
+              step="0.01"
+              id="regBalance"
+              placeholder="0.00"
+              class="w-full px-4 py-2.5 bg-navy-input border border-navy-border rounded-xl text-xs text-white focus:outline-none focus:border-blue-500"
+            />
+          </div>
+          <div>
+            <label
+              class="block text-[10px] font-bold text-slate-400 uppercase mb-1.5"
+              >Set Password</label
+            >
+            <input
+              type="password"
+              id="regPassword"
+              required
+              placeholder="Create workspace key"
+              class="w-full px-4 py-2.5 bg-navy-input border border-navy-border rounded-xl text-xs text-white focus:outline-none focus:border-blue-500"
+            />
+          </div>
+          <button
+            type="submit"
+            class="w-full py-3 bg-blue-600 hover:bg-blue-500 text-white text-xs font-semibold rounded-xl shadow-lg transition duration-150 flex items-center justify-center gap-2"
+          >
+            <span>Register & Start Tracking</span>
+            <i class="ri-arrow-right-line"></i>
+          </button>
+        </form>
+      </div>
+    </div>
+
+    <div
+      id="loginScreen"
+      class="fixed inset-0 z-50 bg-navy-bg flex items-center justify-center p-4 hidden"
+    >
+      <div
+        class="bg-navy-card border border-navy-border p-8 rounded-2xl w-full max-w-md shadow-2xl space-y-6 fade-in"
+      >
+        <div class="text-center space-y-2">
+          <div
+            class="inline-flex p-3 bg-blue-600/10 text-blue-400 border border-blue-500/20 rounded-2xl mb-2"
+          >
+            <i class="ri-lock-password-line text-3xl"></i>
+          </div>
+          <h2
+            id="loginGreeting"
+            class="text-xl font-bold text-white tracking-tight"
+          >
+            Enter Workspace
+          </h2>
+          <p class="text-slate-400 text-xs">
+            This workspace is protected. Please enter your password.
+          </p>
+        </div>
+        <form onsubmit="loginUser(event)" class="space-y-4">
+          <div>
+            <label
+              class="block text-[10px] font-bold text-slate-400 uppercase mb-1.5"
+              >Password</label
+            >
+            <input
+              type="password"
+              id="loginPassword"
+              required
+              placeholder="Enter password key"
+              class="w-full px-4 py-2.5 bg-navy-input border border-navy-border rounded-xl text-xs text-white focus:outline-none focus:border-blue-500"
+            />
+          </div>
+          <div
+            id="loginError"
+            class="hidden text-xs text-rose-400 font-medium flex items-center gap-1"
+          >
+            <i class="ri-error-warning-line"></i>
+            <span>Incorrect password. Please try again.</span>
+          </div>
+          <button
+            type="submit"
+            class="w-full py-3 bg-blue-600 hover:bg-blue-500 text-white text-xs font-semibold rounded-xl shadow-lg transition duration-150 flex items-center justify-center gap-2"
+          >
+            <span>Unlock Workspace</span>
+            <i class="ri-key-line"></i>
+          </button>
+        </form>
+      </div>
+    </div>
+
+    <div id="mainLayout" class="hidden flex flex-col lg:flex-row min-h-screen">
+      <aside
+        class="w-full lg:w-64 bg-navy-sidebar flex flex-col justify-between border-b lg:border-b-0 lg:border-r border-navy-border shrink-0 p-5"
+      >
+        <div class="space-y-8">
+          <div class="flex items-center gap-3">
+            <div class="p-2 bg-blue-600 rounded-lg text-white">
+              <i class="ri-stack-line text-xl"></i>
+            </div>
+            <div>
+              <h1 class="font-bold text-base text-white tracking-tight">
+                FinTrack Pro
+              </h1>
+              <p
+                class="text-[10px] text-slate-500 font-semibold tracking-wider uppercase"
+              >
+                Enterprise Finance
+              </p>
+            </div>
+          </div>
+          <nav class="space-y-1">
+            <button
+              onclick="changeTab('dashboard')"
+              id="btn-dashboard"
+              class="w-full flex items-center gap-3 px-4 py-3 rounded-xl bg-blue-600/10 text-blue-400 font-medium text-sm border border-blue-500/20 text-left transition"
+            >
+              <i class="ri-dashboard-line text-lg"></i>
+              <span>Dashboard</span>
+            </button>
+            <button
+              onclick="changeTab('settings')"
+              id="btn-settings"
+              class="w-full flex items-center gap-3 px-4 py-3 rounded-xl text-slate-400 hover:text-white hover:bg-white/5 font-medium text-sm text-left transition"
+            >
+              <i class="ri-settings-4-line text-lg"></i>
+              <span>Settings</span>
+            </button>
+          </nav>
+        </div>
+        <div class="mt-8 lg:mt-0 pt-4 border-t border-navy-border/40">
+          <button
+            onclick="showModal()"
+            class="w-full flex items-center justify-center gap-2 px-4 py-3 bg-blue-600 hover:bg-blue-500 text-white text-xs font-semibold rounded-xl shadow-lg transition"
+          >
+            <i class="ri-add-line text-base"></i>
+            <span>Add Transaction</span>
+          </button>
+        </div>
+      </aside>
+
+      <main class="flex-1 flex flex-col min-h-screen">
+        <header
+          class="h-16 border-b border-navy-border/60 px-6 lg:px-8 flex items-center justify-between bg-navy-bg/50 backdrop-blur sticky top-0 z-30"
+        >
+          <div>
+            <span
+              class="text-xs lg:text-sm font-semibold text-slate-300 tracking-wide flex items-center gap-1.5"
+              id="headerGreeting"
+            >
+              <i class="ri-sun-line text-yellow-500"></i> Preparing your
+              dashboard...
+            </span>
+          </div>
+          <div class="flex items-center gap-4">
+            <span
+              id="headerUserName"
+              class="text-xs font-semibold text-slate-400 bg-navy-card px-3 py-1.5 border border-navy-border rounded-lg"
+            ></span>
+            <button
+              onclick="lockApp()"
+              class="text-xs font-semibold text-slate-400 hover:text-white transition bg-navy-card hover:bg-navy-border px-3.5 py-1.5 rounded-lg border border-navy-border flex items-center gap-1.5"
+            >
+              <i class="ri-logout-box-r-line"></i>
+              <span>Logout</span>
+            </button>
+          </div>
+        </header>
+
+        <div class="p-6 lg:p-8 space-y-6 flex-1 max-w-[1600px] w-full mx-auto">
+          <section id="tab-dashboard" class="space-y-6 fade-in">
+            <div>
+              <h2
+                class="text-2xl lg:text-3xl font-bold text-white tracking-tight"
+              >
+                Financial Overview
+              </h2>
+              <p class="text-slate-400 text-xs lg:text-sm mt-0.5">
+                Real-time tracking application
+              </p>
+            </div>
+
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+              <div
+                class="bg-navy-card border border-navy-border rounded-xl p-5 shadow-sm"
+              >
+                <div class="space-y-3">
+                  <div
+                    class="p-2 w-fit bg-blue-500/10 text-blue-400 rounded-lg"
+                  >
+                    <i class="ri-bank-fill text-lg"></i>
+                  </div>
+                  <div>
+                    <p class="text-xs font-medium text-slate-400">
+                      Current Balance
+                    </p>
+                    <h3
+                      id="statBalance"
+                      class="text-2xl font-bold text-white mt-1"
+                    >
+                      $0.00
+                    </h3>
+                  </div>
+                </div>
+              </div>
+              <div
+                class="bg-navy-card border border-navy-border rounded-xl p-5 shadow-sm"
+              >
+                <div class="space-y-3">
+                  <div
+                    class="p-2 w-fit bg-emerald-500/10 text-emerald-400 rounded-lg"
+                  >
+                    <i class="ri-arrow-right-up-long-line text-lg"></i>
+                  </div>
+                  <div>
+                    <p class="text-xs font-medium text-slate-400">
+                      Total Income
+                    </p>
+                    <h3
+                      id="statIncome"
+                      class="text-2xl font-bold text-emerald-400 mt-1"
+                    >
+                      $0.00
+                    </h3>
+                  </div>
+                </div>
+              </div>
+              <div
+                class="bg-navy-card border border-navy-border rounded-xl p-5 shadow-sm"
+              >
+                <div class="space-y-3">
+                  <div
+                    class="p-2 w-fit bg-rose-500/10 text-rose-400 rounded-lg"
+                  >
+                    <i class="ri-arrow-right-down-long-line text-lg"></i>
+                  </div>
+                  <div>
+                    <p class="text-xs font-medium text-slate-400">
+                      Total Expense
+                    </p>
+                    <h3
+                      id="statExpense"
+                      class="text-2xl font-bold text-rose-500 mt-1"
+                    >
+                      $0.00
+                    </h3>
+                  </div>
+                </div>
+              </div>
+              <div
+                class="bg-navy-card border border-navy-border rounded-xl p-5 shadow-sm"
+              >
+                <div class="space-y-3">
+                  <div
+                    class="p-2 w-fit bg-indigo-500/10 text-indigo-400 rounded-lg"
+                  >
+                    <i class="ri-wallet-line text-lg"></i>
+                  </div>
+                  <div>
+                    <p class="text-xs font-medium text-slate-400">
+                      Total Transactions
+                    </p>
+                    <h3
+                      id="statCount"
+                      class="text-2xl font-bold text-white mt-1"
+                    >
+                      0
+                    </h3>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 items-stretch">
+              <div
+                class="bg-navy-card border border-navy-border rounded-xl p-6 shadow-sm flex flex-col justify-between min-h-[420px]"
+              >
+                <div>
+                  <div class="flex items-center justify-between mb-4">
+                    <h3 class="font-bold text-sm text-white tracking-wide">
+                      Cash Flow Analysis
+                    </h3>
+                    <div class="flex items-center gap-3 text-[11px]">
+                      <span class="flex items-center gap-1">
+                        <span
+                          class="h-2.5 w-4 rounded-sm bg-emerald-500"
+                        ></span>
+                        <span class="text-slate-400">Income</span>
+                      </span>
+                      <span class="flex items-center gap-1">
+                        <span class="h-2.5 w-4 rounded-sm bg-rose-500"></span>
+                        <span class="text-slate-400">Expenses</span>
+                      </span>
+                    </div>
+                  </div>
+                  <div
+                    class="relative w-full bg-navy-bg/40 border border-navy-border/50 rounded-lg p-4 h-64 flex flex-col justify-between"
+                  >
+                    <div
+                      class="flex flex-col justify-between h-48 text-[10px] text-slate-500 font-mono select-none"
+                    >
+                      <div
+                        class="flex justify-between items-center w-full border-b border-navy-border/10 pb-0.5"
+                      >
+                        <span>100%</span>
+                      </div>
+                      <div
+                        class="flex justify-between items-center w-full border-b border-navy-border/10 pb-0.5"
+                      >
+                        <span>75%</span>
+                      </div>
+                      <div
+                        class="flex justify-between items-center w-full border-b border-navy-border/10 pb-0.5"
+                      >
+                        <span>50%</span>
+                      </div>
+                      <div
+                        class="flex justify-between items-center w-full border-b border-navy-border/10 pb-0.5"
+                      >
+                        <span>25%</span>
+                      </div>
+                      <div
+                        class="flex justify-between items-center w-full pb-0.5"
+                      >
+                        <span>0%</span>
+                      </div>
+                    </div>
+                    <div
+                      id="chartContainer"
+                      class="absolute left-12 right-4 top-4 bottom-10 flex items-end justify-center gap-10"
+                    ></div>
+                    <div
+                      class="text-center text-[10px] text-slate-500 font-medium tracking-wide"
+                    >
+                      Income vs Expenses Graph
+                    </div>
+                  </div>
+                </div>
+                <div
+                  class="mt-4 pt-4 border-t border-navy-border/40 flex items-center justify-between text-xs text-slate-400"
+                >
+                  <span class="flex items-center gap-1.5">
+                    <span
+                      class="h-2 w-2 bg-emerald-500 rounded-full animate-pulse"
+                    ></span>
+                    Active Ledger
+                  </span>
+                  <button
+                    onclick="loadSampleData()"
+                    class="text-blue-400 hover:underline font-semibold flex items-center gap-1"
+                  >
+                    <i class="ri-refresh-line"></i> Load Sample Data
+                  </button>
+                </div>
+              </div>
+
+              <div
+                class="bg-navy-card border border-navy-border rounded-xl p-6 shadow-sm flex flex-col justify-between min-h-[420px]"
+              >
+                <div>
+                  <h3 class="font-bold text-sm text-white tracking-wide mb-4">
+                    All Transactions
+                  </h3>
+                  <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-4">
+                    <div class="relative">
+                      <i
+                        class="ri-search-line absolute left-3 top-1/2 -translate-y-1/2 text-slate-500 text-xs"
+                      ></i>
+                      <input
+                        type="search"
+                        id="searchBox"
+                        placeholder="Search entries..."
+                        oninput="updateDashboardUI()"
+                        class="w-full pl-9 pr-3 py-1.5 bg-navy-input border border-navy-border rounded-lg text-xs text-slate-200 placeholder-slate-500 focus:outline-none focus:border-blue-500"
+                      />
+                    </div>
+                    <select
+                      id="filterSelect"
+                      onchange="updateDashboardUI()"
+                      class="w-full px-3 py-1.5 bg-navy-input border border-navy-border rounded-lg text-xs text-slate-300 focus:outline-none cursor-pointer"
+                    >
+                      <option value="all">All Types</option>
+                      <option value="income">Income only</option>
+                      <option value="expense">Expense only</option>
+                    </select>
+                  </div>
+                  <div
+                    class="overflow-x-auto rounded-lg border border-navy-border/40 bg-navy-bg/20 max-h-[220px] overflow-y-auto"
+                  >
+                    <table class="w-full text-left text-xs border-collapse">
+                      <thead
+                        class="bg-navy-bg/80 sticky top-0 text-slate-400 font-bold uppercase tracking-wider border-b border-navy-border/80 text-[10px]"
+                      >
+                        <tr>
+                          <th class="py-2 px-3">Date</th>
+                          <th class="py-2 px-3">Description</th>
+                          <th class="py-2 px-3">Category</th>
+                          <th class="py-2 px-3 text-right">Amount</th>
+                          <th class="py-2 px-3 text-center">Actions</th>
+                        </tr>
+                      </thead>
+                      <tbody
+                        id="tableBody"
+                        class="divide-y divide-navy-border/30 text-slate-300"
+                      ></tbody>
+                    </table>
+                  </div>
+                  <div
+                    id="noDataPlaceholder"
+                    class="hidden flex flex-col items-center justify-center text-center py-8"
+                  >
+                    <i
+                      class="ri-search-eye-line text-xl text-slate-600 mb-1"
+                    ></i>
+                    <span class="text-xs text-slate-500"
+                      >No transactions match your filters</span
+                    >
+                  </div>
+                </div>
+                <div
+                  class="mt-4 pt-4 border-t border-navy-border/40 flex items-center justify-between text-xs text-slate-500"
+                >
+                  <span id="entriesCount">Showing 0 entries</span>
+                  <span class="italic text-[10px]">Saved Locally</span>
+                </div>
+              </div>
+            </div>
+          </section>
+
+          <section id="tab-settings" class="hidden space-y-6 fade-in">
+            <div>
+              <h2
+                class="text-2xl lg:text-3xl font-bold text-white tracking-tight"
+              >
+                Account & Settings
+              </h2>
+              <p class="text-slate-400 text-xs lg:text-sm mt-0.5">
+                Manage details and clear system data
+              </p>
+            </div>
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+              <div
+                class="bg-navy-card border border-navy-border rounded-xl p-6 shadow-sm space-y-4"
+              >
+                <h3
+                  class="font-bold text-sm text-white tracking-wide border-b border-navy-border/60 pb-3"
+                >
+                  Update Profile
+                </h3>
+                <form onsubmit="updateProfile(event)" class="space-y-4">
+                  <div>
+                    <label
+                      class="block text-[10px] font-bold text-slate-400 uppercase mb-1.5"
+                      >Your Name</label
+                    >
+                    <input
+                      type="text"
+                      id="settingsName"
+                      required
+                      class="w-full px-4 py-2.5 bg-navy-input border border-navy-border rounded-xl text-xs text-white focus:outline-none focus:border-blue-500"
+                    />
+                  </div>
+                  <div>
+                    <label
+                      class="block text-[10px] font-bold text-slate-400 uppercase mb-1.5"
+                      >New Password</label
+                    >
+                    <input
+                      type="password"
+                      id="settingsPassword"
+                      placeholder="Enter new password (optional)"
+                      class="w-full px-4 py-2.5 bg-navy-input border border-navy-border rounded-xl text-xs text-white focus:outline-none focus:border-blue-500"
+                    />
+                  </div>
+                  <button
+                    type="submit"
+                    class="px-4 py-2 bg-blue-600 hover:bg-blue-500 text-white text-xs font-semibold rounded-xl transition"
+                  >
+                    Save Changes
+                  </button>
+                </form>
+              </div>
+              <div
+                class="bg-navy-card border border-navy-border rounded-xl p-6 shadow-sm flex flex-col justify-between"
+              >
+                <div class="space-y-4">
+                  <h3
+                    class="font-bold text-sm text-rose-400 tracking-wide border-b border-navy-border/60 pb-3 flex items-center gap-2"
+                  >
+                    <i class="ri-error-warning-line"></i>
+                    <span>Danger Zone</span>
+                  </h3>
+                  <div>
+                    <p class="text-xs font-semibold text-slate-200">
+                      Reset Application Data
+                    </p>
+                    <p class="text-xs text-slate-400 mt-1">
+                      Warning: This will clear all transactions, balance
+                      details, settings, and registration details permanently
+                      from your browser cache.
+                    </p>
+                  </div>
+                </div>
+                <div class="pt-4 border-t border-navy-border/40 mt-6">
+                  <button
+                    onclick="resetData()"
+                    class="px-4 py-2.5 bg-rose-500/10 hover:bg-rose-500 hover:text-white text-rose-400 text-xs font-semibold rounded-xl border border-rose-500/20 transition duration-150"
+                  >
+                    Reset All Data
+                  </button>
+                </div>
+              </div>
+            </div>
+          </section>
+        </div>
+      </main>
+    </div>
+
+    <div id="modalContainer" class="fixed inset-0 z-50 overflow-y-auto hidden">
+      <div class="flex items-center justify-center min-h-screen p-4">
+        <div
+          onclick="hideModal()"
+          class="fixed inset-0 bg-navy-bg/80 backdrop-blur-sm"
+        ></div>
+        <div
+          class="relative bg-navy-card rounded-xl w-full max-w-md border border-navy-border overflow-hidden shadow-2xl z-10 fade-in"
+        >
+          <div
+            class="px-5 py-3.5 border-b border-navy-border/60 flex items-center justify-between bg-navy-sidebar"
+          >
+            <h3 class="text-xs font-bold text-white tracking-wide">
+              Add Transaction
+            </h3>
+            <button
+              onclick="hideModal()"
+              class="text-slate-400 hover:text-white"
+            >
+              <i class="ri-close-line text-lg"></i>
+            </button>
+          </div>
+          <form onsubmit="addTransaction(event)" class="p-5 space-y-4">
+            <div>
+              <label
+                class="block text-[10px] font-bold text-slate-400 uppercase mb-1.5"
+                >Type</label
+              >
+              <div class="grid grid-cols-2 gap-2">
+                <button
+                  type="button"
+                  id="btnIncome"
+                  onclick="setFormType('income')"
+                  class="py-1.5 rounded-lg border text-xs font-semibold flex items-center justify-center gap-1.5 bg-emerald-500/10 border-emerald-500 text-emerald-400"
+                >
+                  <i class="ri-arrow-right-up-long-line"></i> Income
+                </button>
+                <button
+                  type="button"
+                  id="btnExpense"
+                  onclick="setFormType('expense')"
+                  class="py-1.5 rounded-lg border text-xs font-semibold flex items-center justify-center gap-1.5 border-navy-border text-slate-400"
+                >
+                  <i class="ri-arrow-right-down-long-line"></i> Expense
+                </button>
+              </div>
+              <input type="hidden" id="formType" value="income" />
+            </div>
+            <div>
+              <label
+                class="block text-[10px] font-bold text-slate-400 uppercase mb-1"
+                >Description</label
+              >
+              <input
+                type="text"
+                id="formDesc"
+                required
+                placeholder="Description details..."
+                class="w-full px-3 py-1.5 bg-navy-input border border-navy-border rounded-lg text-xs text-white focus:outline-none focus:border-blue-500"
+              />
+            </div>
+            <div class="grid grid-cols-2 gap-4">
+              <div>
+                <label
+                  class="block text-[10px] font-bold text-slate-400 uppercase mb-1"
+                  >Amount ($)</label
+                >
+                <input
+                  type="number"
+                  step="0.01"
+                  min="0.01"
+                  id="formAmount"
+                  required
+                  placeholder="0.00"
+                  class="w-full px-3 py-1.5 bg-navy-input border border-navy-border rounded-lg text-xs text-white focus:outline-none focus:border-blue-500 font-semibold"
+                />
+              </div>
+              <div>
+                <label
+                  class="block text-[10px] font-bold text-slate-400 uppercase mb-1"
+                  >Date</label
+                >
+                <input
+                  type="date"
+                  id="formDate"
+                  required
+                  class="w-full px-3 py-1.5 bg-navy-input border border-navy-border rounded-lg text-xs text-slate-300 focus:outline-none focus:border-blue-500"
+                />
+              </div>
+            </div>
+            <div>
+              <label
+                class="block text-[10px] font-bold text-slate-400 uppercase mb-1"
+                >Category</label
+              >
+              <select
+                id="formCategory"
+                class="w-full px-3 py-1.5 bg-navy-input border border-navy-border rounded-lg text-xs text-slate-300 focus:outline-none cursor-pointer"
+              >
+                <option value="Salary">Salary & Income</option>
+                <option value="Rent">Rent & Living</option>
+                <option value="Utilities">Utilities & Services</option>
+                <option value="Food">Food & Dining</option>
+                <option value="Investments">Investments</option>
+                <option value="Entertainment">Entertainment</option>
+              </select>
+            </div>
+            <div
+              class="pt-3 border-t border-navy-border/60 flex items-center justify-end gap-3"
+            >
+              <button
+                type="button"
+                onclick="hideModal()"
+                class="px-3.5 py-1.5 text-xs text-slate-400 hover:text-white"
+              >
+                Cancel
+              </button>
+              <button
+                type="submit"
+                class="px-4 py-1.5 bg-blue-600 hover:bg-blue-500 text-white text-xs font-semibold rounded-lg shadow-md"
+              >
+                Save
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+
+    <div
+      id="toast"
+      class="fixed bottom-5 right-5 z-50 bg-navy-card border border-blue-500/30 text-xs px-4 py-3 rounded-xl shadow-2xl hidden flex items-center gap-2 fade-in"
+    >
+      <i class="ri-checkbox-circle-fill text-emerald-400 text-base"></i>
+      <span id="toastText" class="text-slate-200"></span>
+    </div>
+
+    <script>
+      var transactions = [];
+      var startingBalance = 0;
+      var sessionActive = false;
+
+      window.onload = function () {
+        checkApplicationState();
+        document.getElementById("formDate").value = new Date()
+          .toISOString()
+          .split("T")[0];
+      };
+
+      function checkApplicationState() {
+        var register = document.getElementById("registerScreen");
+        var login = document.getElementById("loginScreen");
+        var main = document.getElementById("mainLayout");
+
+        register.classList.add("hidden");
+        login.classList.add("hidden");
+        main.classList.add("hidden");
+
+        var userCheck = localStorage.getItem("user_details");
+        if (userCheck == null) {
+          register.classList.remove("hidden");
+        } else {
+          var detailsObj = JSON.parse(userCheck);
+          if (sessionActive == false) {
+            document.getElementById("loginGreeting").innerText =
+              "Welcome back, " + detailsObj.name + "!";
+            document.getElementById("loginPassword").value = "";
+            document.getElementById("loginError").classList.add("hidden");
+            login.classList.remove("hidden");
+          } else {
+            startingBalance = Number(detailsObj.balance);
+            document.getElementById("settingsName").value = detailsObj.name;
+            document.getElementById("headerUserName").innerText =
+              detailsObj.name;
+            main.classList.remove("hidden");
+
+            renderGreeting(detailsObj.name);
+
+            var storedItems = localStorage.getItem("local_transactions");
+            if (storedItems != null) {
+              transactions = JSON.parse(storedItems);
+            } else {
+              transactions = [];
+            }
+            updateDashboardUI();
+          }
+        }
+      }
+
+      function registerUser(e) {
+        e.preventDefault();
+        var nameInput = document.getElementById("regName").value;
+        var balanceInput = document.getElementById("regBalance").value;
+        var passwordInput = document.getElementById("regPassword").value;
+
+        if (balanceInput == "") {
+          balanceInput = 0;
+        }
+
+        var saveObj = {
+          name: nameInput,
+          balance: balanceInput,
+          password: passwordInput,
+        };
+
+        localStorage.setItem("user_details", JSON.stringify(saveObj));
+        sessionActive = true;
+        showToast("Registration successful!");
+        checkApplicationState();
+      }
+
+      function loginUser(e) {
+        e.preventDefault();
+        var passInput = document.getElementById("loginPassword").value;
+        var storedData = localStorage.getItem("user_details");
+        var detailsObj = JSON.parse(storedData);
+
+        if (passInput == detailsObj.password) {
+          sessionActive = true;
+          showToast("Welcome to your dashboard");
+          checkApplicationState();
+        } else {
+          document.getElementById("loginError").classList.remove("hidden");
+        }
+      }
+
+      function lockApp() {
+        sessionActive = false;
+        changeTab("dashboard");
+        checkApplicationState();
+        showToast("Logged out successfully");
+      }
+
+      function updateProfile(e) {
+        e.preventDefault();
+        var updatedName = document.getElementById("settingsName").value;
+        var updatedPass = document.getElementById("settingsPassword").value;
+
+        var storedData = localStorage.getItem("user_details");
+        var detailsObj = JSON.parse(storedData);
+
+        detailsObj.name = updatedName;
+        if (updatedPass != "") {
+          detailsObj.password = updatedPass;
+        }
+
+        localStorage.setItem("user_details", JSON.stringify(detailsObj));
+        showToast("Profile details updated");
+        checkApplicationState();
+      }
+
+      function changeTab(tabName) {
+        var dashTab = document.getElementById("tab-dashboard");
+        var setTab = document.getElementById("tab-settings");
+        var dashBtn = document.getElementById("btn-dashboard");
+        var setBtn = document.getElementById("btn-settings");
+
+        if (tabName == "dashboard") {
+          dashTab.classList.remove("hidden");
+          setTab.classList.add("hidden");
+          dashBtn.className =
+            "w-full flex items-center gap-3 px-4 py-3 rounded-xl bg-blue-600/10 text-blue-400 font-medium text-sm border border-blue-500/20 text-left transition";
+          setBtn.className =
+            "w-full flex items-center gap-3 px-4 py-3 rounded-xl text-slate-400 hover:text-white hover:bg-white/5 font-medium text-sm text-left transition";
+        } else {
+          dashTab.classList.add("hidden");
+          setTab.classList.remove("hidden");
+          dashBtn.className =
+            "w-full flex items-center gap-3 px-4 py-3 rounded-xl text-slate-400 hover:text-white hover:bg-white/5 font-medium text-sm text-left transition";
+          setBtn.className =
+            "w-full flex items-center gap-3 px-4 py-3 rounded-xl bg-blue-600/10 text-blue-400 font-medium text-sm border border-blue-500/20 text-left transition";
+        }
+      }
+
+      function renderGreeting(userName) {
+        var hour = new Date().getHours();
+        var greetingText = "Good morning";
+        var iconStr = "ri-sun-line text-yellow-500";
+
+        if (hour >= 12 && hour < 17) {
+          greetingText = "Good afternoon";
+          iconStr = "ri-sun-fill text-amber-500";
+        } else if (hour >= 17 && hour < 21) {
+          greetingText = "Good evening";
+          iconStr = "ri-moon-clear-line text-blue-400";
+        } else if (hour >= 21 || hour < 5) {
+          greetingText = "Good night";
+          iconStr = "ri-moon-fill text-indigo-400";
+        }
+
+        document.getElementById("headerGreeting").innerHTML =
+          '<i class="' +
+          iconStr +
+          '"></i> ' +
+          greetingText +
+          ', <strong class="text-white">' +
+          userName +
+          "</strong>!";
+      }
+
+      function updateDashboardUI() {
+        localStorage.setItem(
+          "local_transactions",
+          JSON.stringify(transactions),
+        );
+
+        var totalInc = 0;
+        var totalExp = 0;
+
+        for (var i = 0; i < transactions.length; i++) {
+          var item = transactions[i];
+          if (item.type == "income") {
+            totalInc = totalInc + Number(item.amount);
+          } else {
+            totalExp = totalExp + Number(item.amount);
+          }
+        }
+
+        var finalBalance = startingBalance + totalInc - totalExp;
+
+        document.getElementById("statBalance").innerText =
+          "$" + finalBalance.toFixed(2);
+        document.getElementById("statIncome").innerText =
+          "$" + totalInc.toFixed(2);
+        document.getElementById("statExpense").innerText =
+          "$" + totalExp.toFixed(2);
+        document.getElementById("statCount").innerText = transactions.length;
+
+        var searchText = document
+          .getElementById("searchBox")
+          .value.toLowerCase();
+        var filterType = document.getElementById("filterSelect").value;
+        var table = document.getElementById("tableBody");
+        var placeholder = document.getElementById("noDataPlaceholder");
+
+        table.innerHTML = "";
+
+        var matchCount = 0;
+
+        for (var j = 0; j < transactions.length; j++) {
+          var t = transactions[j];
+          var descMatch = t.description.toLowerCase().indexOf(searchText) != -1;
+          var catMatch = t.category.toLowerCase().indexOf(searchText) != -1;
+          var typeMatch = filterType == "all" || t.type == filterType;
+
+          if ((descMatch || catMatch) && typeMatch) {
+            matchCount = matchCount + 1;
+
+            var row = document.createElement("tr");
+            row.className = "hover:bg-navy-bg/30 transition-colors";
+
+            var sign = "-";
+            var styleClass = "text-rose-400 font-semibold";
+            if (t.type == "income") {
+              sign = "+";
+              styleClass = "text-emerald-400 font-semibold";
+            }
+
+            var d = new Date(t.date);
+            var dateStr = d.toLocaleDateString("en-US", {
+              month: "short",
+              day: "numeric",
+              year: "numeric",
+            });
+
+            row.innerHTML =
+              ' \
+              <td class="py-2.5 px-3 text-slate-400 whitespace-nowrap">' +
+              dateStr +
+              '</td> \
+              <td class="py-2.5 px-3 font-medium text-slate-100">' +
+              t.description +
+              '</td> \
+              <td class="py-2.5 px-3"><span class="px-2 py-0.5 rounded text-[9px] bg-navy-input border border-navy-border text-slate-400 font-medium">' +
+              t.category +
+              '</span></td> \
+              <td class="py-2.5 px-3 text-right ' +
+              styleClass +
+              '">' +
+              sign +
+              "$" +
+              Number(t.amount).toFixed(2) +
+              '</td> \
+              <td class="py-2.5 px-3 text-center"> \
+                <button onclick="removeTransaction(' +
+              t.id +
+              ')" class="p-1 text-rose-400 hover:text-rose-300 transition"> \
+                  <i class="ri-delete-bin-line"></i> \
+                </button> \
+              </td> \
+            ';
+            table.appendChild(row);
+          }
+        }
+
+        document.getElementById("entriesCount").innerText =
+          "Showing " + matchCount + " of " + transactions.length + " entries";
+
+        if (matchCount == 0) {
+          placeholder.classList.remove("hidden");
+        } else {
+          placeholder.classList.add("hidden");
+        }
+
+        renderCustomChart(totalInc, totalExp);
+      }
+
+      function renderCustomChart(inc, exp) {
+        var container = document.getElementById("chartContainer");
+        container.innerHTML = "";
+
+        var largest = inc;
+        if (exp > largest) {
+          largest = exp;
+        }
+        if (largest == 0) {
+          largest = 100;
+        }
+
+        var incPct = (inc / largest) * 90;
+        var expPct = (exp / largest) * 90;
+
+        if (incPct < 8 && inc > 0) {
+          incPct = 8;
+        }
+        if (expPct < 8 && exp > 0) {
+          expPct = 8;
+        }
+
+        container.innerHTML =
+          ' \
+          <div class="flex flex-col items-center justify-end h-full"> \
+            <div class="bg-emerald-500 w-12 sm:w-16 rounded-t transition-all duration-300 relative group cursor-pointer" style="height: ' +
+          incPct +
+          '%"> \
+              <span class="absolute bottom-full left-1/2 -translate-x-1/2 bg-navy-sidebar border border-navy-border text-[9px] px-2 py-0.5 rounded shadow-xl hidden group-hover:block whitespace-nowrap text-emerald-400 mb-1">$' +
+          inc.toFixed(2) +
+          '</span> \
+            </div> \
+            <span class="text-[10px] font-semibold text-slate-400 mt-2">Income</span> \
+          </div> \
+          <div class="flex flex-col items-center justify-end h-full"> \
+            <div class="bg-rose-500 w-12 sm:w-16 rounded-t transition-all duration-300 relative group cursor-pointer" style="height: ' +
+          expPct +
+          '%"> \
+              <span class="absolute bottom-full left-1/2 -translate-x-1/2 bg-navy-sidebar border border-navy-border text-[9px] px-2 py-0.5 rounded shadow-xl hidden group-hover:block whitespace-nowrap text-rose-400 mb-1">$' +
+          exp.toFixed(2) +
+          '</span> \
+            </div> \
+            <span class="text-[10px] font-semibold text-slate-400 mt-2">Expenses</span> \
+          </div> \
+        ';
+      }
+
+      function showModal() {
+        document.getElementById("formDesc").value = "";
+        document.getElementById("formAmount").value = "";
+        setFormType("income");
+        document.getElementById("modalContainer").classList.remove("hidden");
+      }
+
+      function hideModal() {
+        document.getElementById("modalContainer").classList.add("hidden");
+      }
+
+      function setFormType(type) {
+        document.getElementById("formType").value = type;
+        var btnInc = document.getElementById("btnIncome");
+        var btnExp = document.getElementById("btnExpense");
+
+        if (type == "income") {
+          btnInc.className =
+            "py-1.5 rounded-lg border text-xs font-semibold flex items-center justify-center gap-1.5 bg-emerald-500/10 border-emerald-500 text-emerald-400";
+          btnExp.className =
+            "py-1.5 rounded-lg border text-xs font-semibold flex items-center justify-center gap-1.5 border-navy-border text-slate-400";
+        } else {
+          btnInc.className =
+            "py-1.5 rounded-lg border text-xs font-semibold flex items-center justify-center gap-1.5 border-navy-border text-slate-400";
+          btnExp.className =
+            "py-1.5 rounded-lg border text-xs font-semibold flex items-center justify-center gap-1.5 bg-rose-500/10 border-rose-500 text-rose-400";
+        }
+      }
+
+      function addTransaction(e) {
+        e.preventDefault();
+
+        var type = document.getElementById("formType").value;
+        var desc = document.getElementById("formDesc").value;
+        var amt = document.getElementById("formAmount").value;
+        var dte = document.getElementById("formDate").value;
+        var cat = document.getElementById("formCategory").value;
+
+        var itemObj = {
+          id: Date.now(),
+          type: type,
+          description: desc,
+          amount: amt,
+          date: dte,
+          category: cat,
+        };
+
+        transactions.push(itemObj);
+        hideModal();
+        updateDashboardUI();
+        showToast("Transaction added successfully");
+      }
+
+      function removeTransaction(id) {
+        var tempArr = [];
+        for (var i = 0; i < transactions.length; i++) {
+          if (transactions[i].id != id) {
+            tempArr.push(transactions[i]);
+          }
+        }
+        transactions = tempArr;
+        updateDashboardUI();
+        showToast("Entry deleted successfully");
+      }
+
+      function loadSampleData() {
+        transactions = [
+          {
+            id: 1,
+            type: "income",
+            description: "Enterprise Project Delivery",
+            amount: 5500.0,
+            date: "2026-06-12",
+            category: "Salary",
+          },
+          {
+            id: 2,
+            type: "expense",
+            description: "Cloud Services Subscription",
+            amount: 480.0,
+            date: "2026-06-14",
+            category: "Utilities",
+          },
+          {
+            id: 3,
+            type: "expense",
+            description: "Workspace Hub Rent",
+            amount: 350.0,
+            date: "2026-06-15",
+            category: "Rent",
+          },
+          {
+            id: 4,
+            type: "income",
+            description: "Investment Dividends",
+            amount: 1450.0,
+            date: "2026-06-20",
+            category: "Investments",
+          },
+        ];
+        updateDashboardUI();
+        showToast("Sample data loaded successfully");
+      }
+
+      function resetData() {
+        localStorage.removeItem("user_details");
+        localStorage.removeItem("local_transactions");
+        transactions = [];
+        startingBalance = 0;
+        sessionActive = false;
+        changeTab("dashboard");
+        checkApplicationState();
+        showToast("All data cleared completely");
+      }
+
+      function showToast(msg) {
+        var toast = document.getElementById("toast");
+        document.getElementById("toastText").innerText = msg;
+        toast.classList.remove("hidden");
+        setTimeout(function () {
+          toast.classList.add("hidden");
+        }, 3000);
+      }
+    </script>
+  </body>
+</html>
